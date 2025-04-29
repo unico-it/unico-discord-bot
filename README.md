@@ -2,7 +2,7 @@
 
 ##### Information needed in the .env file
 <p>
-<b>DS_TOKEN</b> : Discord token of the bot from [the discord developer portal](https://discord.com/developers/)<br>
+<b>DS_TOKEN</b> : Discord token of the bot from [the discord developer portal](https://discord.com/developers/) <br> 
 <b>GUILD_ID</b> : Your discord server ID<br>
 <b>CLIENT_ID</b> : The discord Application ID from [the discord developer portal](https://discord.com/developers/) in the app page of your bot.<br>
 <b>UNICO_API_KEY</b> : Your UNICO api key<br>
