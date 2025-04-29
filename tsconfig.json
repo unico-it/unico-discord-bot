@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "importHelpers": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "newLine": "crlf",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "preserveConstEnums": true,
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "target": "ES2023",
+        "sourceMap": true,
+        "sourceRoot": "./",
+        "outDir": "./dist",
+    },
+    "files": [
+        "start.ts",
+        "./libs/commands/ping.ts",
+        "./libs/commands/ask.ts",
+        "./libs/networking/network_req.ts",
+        "./libs/registers/register-command.ts",
+        "./libs/utils/enums.ts",
+        "./libs/Unico/unico.ts",
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@discordjs/typings"
+    ]
+}
