@@ -1,19 +1,68 @@
-# unico-bot
+<div  align="center">
+      <img alt="lunar" height="150" src="logo.png">
+</div>
 
-##### Information needed in the .env file
-<p>
-<b>DS_TOKEN</b> : Discord token of the bot from [the discord developer portal](https://discord.com/developers/) <br> 
-<b>GUILD_ID</b> : Your discord server ID<br>
-<b>CLIENT_ID</b> : The discord Application ID from [the discord developer portal](https://discord.com/developers/) in the app page of your bot.<br>
-<b>UNICO_API_KEY</b> : Your UNICO api key<br>
-<b>UNICO_BASE_URL</b> : The unico base url<br>
-</p>
+# UNICO Discord Bot
 
+UNICO Discord Bot is designed to integrate UNICO's agents with Discord. This bot allows users to interact with their agents directly from their Discord server, streamlining access to UNICO features without leaving the Discord platform.
 
-##### FOR UNICO DEVS:
-<p>
-Use the staging <b>API key</b> and the stageing <b>BASE URL</b>.<br>
-For the discord token contact the maintainers of the <b>REPO</b>.<br>
-For the discord <b>CLIENT ID</b> is the same as for the discord token.<br>
-For <b>Base URL</b> use the staging url.
-</p>
+## Getting Started (Development)
+
+- **Install [nvm](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/)** (node version manager):
+
+- **Use the same node version from the `.nvmrc` file**:
+  - For Windows:
+    ```sh
+    nvm use $(Get-Content .nvmrc)
+    ```
+  - For Other Systems:
+    ```sh
+    nvm use
+    ```
+- **Install the necessary packages**:
+
+  ```sh
+  npm install
+  ```
+
+- **Rename `.env.example` to `.env`** then replace the content with your keys
+
+  ```bash
+  cp .env.example .env
+  ```
+
+- Information needed in the `.env` file
+
+  - **DISCORD_BOT_TOKEN**: Discord token of the bot from [the discord developer portal](https://discord.com/developers/).
+  - **DISCORD_SERVER_ID**: Your Discord Server ID.
+  - **DISCORD_APPLICATION_ID**: The Discord Application ID from [the discord developer portal](https://discord.com/developers/) in the app page of your bot.
+  - **UNICO_API_KEY**: Your UNICO Api Key.
+  - **UNICO_BASE_URL** (Only if you want to test the bot in staging mode): If not specified the bot will point to production
+
+- **Execute the bot**: `nodemon` package will be used to restart the application when code changes.
+  ```bash
+  npm run dev
+  ```
+
+## Before pushing
+
+**See if you have any rebase to do** (you must have the updated commits history before pushing to avoid conflicts
+between main and your branch):
+
+```sh
+git fetch
+git pull origin main --rebase
+```
+
+## Contributing
+
+If you want to contribute to **UNICO Python package**, follow these steps:
+
+1. Create a new branch for your changes (`git checkout -b your-branch-name`).
+2. Make your changes and commit them (`git commit -m 'Changed something'`).
+3. Push your branch (`git push origin your-branch-name`).
+4. Open a pull request.
+
+## Contact
+
+For more information, contact the **UNICO** support team at: info@theunico.it

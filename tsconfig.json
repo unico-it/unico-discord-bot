@@ -27,10 +27,8 @@
         "start.ts",
         "./libs/commands/ping.ts",
         "./libs/commands/ask.ts",
-        "./libs/networking/network_req.ts",
         "./libs/registers/register-command.ts",
         "./libs/utils/enums.ts",
-        "./libs/Unico/unico.ts",
     ],
     "typeRoots": [
       "./node_modules/@types",
