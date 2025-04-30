@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-module.exports = {
+const command = {
 	name: "ask",
 	data: new SlashCommandBuilder()
 		.setName("ask")
@@ -25,16 +25,18 @@ module.exports = {
 				query: interaction.options.getString("query"),
 			});
 
-			interaction!.editReply(`**${interaction.options.getString("agent")}**: ${completion.text}`);
+			interaction.editReply(`**${interaction.options.getString("agent")}**: ${completion.text}`);
 		} catch (error: unknown) {
 			console.error(error);
 
 			if (error instanceof Error) {
-				interaction!.editReply(error.message);
+				interaction.editReply(error.message);
 				return;
 			}
 
-			interaction!.editReply("An unknown error occurred. If the error persists, please contact UNICO support.");
+			interaction.editReply("An unknown error occurred. If the error persists, please contact UNICO support.");
 		}
 	},
 };
+
+export = command;
