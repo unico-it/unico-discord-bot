@@ -1,60 +1,75 @@
-import dotenv from "dotenv"
-dotenv.config()
-import { Client, GatewayIntentBits, Events, Guild } from "discord.js";
-import CommandRegister from './libs/registers/register-command';
-import { Interaction } from 'discord.js';
-import { join } from "node:path";
+import { Client, Events, GatewayIntentBits, Collection } from "discord.js";
+import CommandRegister from "./libs/registers/register-command";
+import { readdirSync } from "node:fs";
+import { join as path_join } from "node:path";
+import dotenv from "dotenv";
+import path from "path";
 
-const token = process.env.DS_TOKEN;
-const guildId = process.env.GUILD_ID;
-
-if (!token) throw new Error("Token not found in environment variables.");
+dotenv.config();
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildMessageReactions
-  ],
-})
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+});
 
-new CommandRegister(__dirname)
+declare module "discord.js" {
+	export interface Client {
+		commands: Collection<string, any>;
+	}
+}
 
-client.once("ready", (current_client) => {
-  console.log(`✅ Ready! Logged in as ${current_client.user?.tag}`);                                     // The bot is ready!
+client.commands = new Collection();
 
-  if (!guildId) throw new Error("Guild ID not found in environment variables.");                         // Checking if the .env file contains the guildId to check
-  const guild: Guild | undefined = client.guilds.cache.get(guildId!);                                    // Getting the guild with the guildId
-  if (!guild) throw new Error("Guild not found.");                                                       // Checking if the guild exist
+const commandRegister = new CommandRegister(__dirname);
+console.log(`Registered commands: ${commandRegister.getCommandList.join(", ")}`);
 
-  console.log(`✅ Guild found: ${guild.name}`);
-  console.log(`✅ Commands added for ${guild.name}`);
-})
+const foldersPath = path_join(__dirname, "libs/commands");
+const commandFiles = readdirSync(foldersPath).filter(
+	(file) => !file.endsWith(".d.ts") && (file.endsWith(".ts") || file.endsWith(".js"))
+);
 
-client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+for (const file of commandFiles) {
+	try {
+		const filePath = path.resolve(foldersPath, file);
+		const command = require(filePath);
 
-  if (!interaction.isChatInputCommand() || !interaction.isCommand()) return;
-  const command = require(join(__dirname.toString(), 'libs/commands') + "/" + interaction.commandName.toString() + ".ts");
-  if ('data' in command && 'execute' in command) {
-    try {
-      await command!.execute(interaction);                                                                // Execute the command
-    } catch (error) {
-      console.error(error);                                                                                // Log the error
-      await interaction.reply({                                                                            // Reply to the user with an error message
-        content: 'There was an error while executing this command!',
-        ephemeral: true,
-      });
-    }
-  } else {
-    await interaction.reply({                                                                            // Reply to the user with an error message
-      content: 'There was an error while executing this command!\n this command is not registered or does not exist!',
-      ephemeral: true,
-    });
-  }
-})
+		if ("data" in command && "execute" in command) {
+			const commandName = command.name || command.data.name;
+			client.commands.set(commandName, command);
+			console.log(`Command '${commandName}' loaded into client collection`);
+		} else {
+			console.warn(`[WARNING] The command at ${filePath} is missing required properties.`);
+		}
+	} catch (error) {
+		console.error(`[ERROR] Failed to load command ${file}:`, error);
+	}
+}
 
-client.login(token).catch((err) => {
-  console.error("❌ Error logging in:", err.message);
-})
+client.once(Events.ClientReady, (readyClient) => {
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+	if (!interaction.isCommand()) return;
+
+	const command = client.commands.get(interaction.commandName);
+
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`);
+		return;
+	}
+
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		const reply = { content: "There was an error executing this command!", ephemeral: true };
+
+		if (interaction.replied || interaction.deferred) {
+			await interaction.followUp(reply);
+		} else {
+			await interaction.reply(reply);
+		}
+	}
+});
+
+client.login(process.env.DISCORD_BOT_TOKEN);
