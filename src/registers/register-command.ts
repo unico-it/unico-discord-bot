@@ -48,7 +48,7 @@ export default class CommandRegister {
 		this.Commands = [];
 		this.CommandsNames = [];
 
-		const foldersPath = path_join(this.basePath, "libs/commands");
+		const foldersPath = path_join(this.basePath, "commands");
 		const commandFiles = readdirSync(foldersPath).filter(
 			(file) => !file.endsWith(".d.ts") && (file.endsWith(".ts") || file.endsWith(".js"))
 		);

@@ -31,7 +31,7 @@ UNICO Discord Bot is designed to integrate UNICO's agents with Discord. This bot
   cp .env.example .env
   ```
 
-- Information needed in the `.env` file
+- **Information needed in the `.env` file**
 
   - **DISCORD_BOT_TOKEN**: Discord token of the bot from [the discord developer portal](https://discord.com/developers/).
   - **DISCORD_SERVER_ID**: Your Discord Server ID.

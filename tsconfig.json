@@ -24,11 +24,11 @@
         "outDir": "./dist",
     },
     "files": [
-        "start.ts",
-        "./libs/commands/ping.ts",
-        "./libs/commands/ask.ts",
-        "./libs/registers/register-command.ts",
-        "./libs/utils/enums.ts",
+        "src/start.ts",
+        "src/commands/ping.ts",
+        "src/commands/ask.ts",
+        "src/registers/register-command.ts",
+        "src/utils/enums.ts",
     ],
     "typeRoots": [
       "./node_modules/@types",
