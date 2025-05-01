@@ -4,11 +4,11 @@
   "description": "This bot allows users to interact with their agents directly from their Discord server.",
   "license": "MIT",
   "author": "UNICO",
-  "main": "dist/start.js",  
+  "main": "dist/src/start.js",  
   "scripts": {
-    "dev": "nodemon start.ts",
+    "dev": "nodemon src/start.ts",
     "build": "tsc",
-    "start": "node dist/start.js"
+    "start": "node dist/src/start.js"
   },
   "keywords": [],
   "type": "commonjs",

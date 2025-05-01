@@ -1,5 +1,5 @@
 import { Client, Events, GatewayIntentBits, Collection } from "discord.js";
-import CommandRegister from "./libs/registers/register-command";
+import CommandRegister from "./registers/register-command";
 import { readdirSync } from "node:fs";
 import { join as path_join } from "node:path";
 import dotenv from "dotenv";
@@ -22,7 +22,7 @@ client.commands = new Collection();
 const commandRegister = new CommandRegister(__dirname);
 console.log(`Registered commands: ${commandRegister.getCommandList.join(", ")}`);
 
-const foldersPath = path_join(__dirname, "libs/commands");
+const foldersPath = path_join(__dirname, "commands");
 const commandFiles = readdirSync(foldersPath).filter(
 	(file) => !file.endsWith(".d.ts") && (file.endsWith(".ts") || file.endsWith(".js"))
 );
