@@ -1,11 +1,4 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import dotenv from "dotenv";
-dotenv.config();
-const mutedRole = process.env.MUTED_ROLE_ID;
-
-if (!mutedRole) {
-    throw new Error("MUTED_ROLE_ID is not defined in .env file");
-}
 
 const command = {
 	name: "kick",
