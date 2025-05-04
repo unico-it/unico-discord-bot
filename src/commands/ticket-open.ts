@@ -19,7 +19,7 @@ const command = {
             .setRequired(true))
     .addBooleanOption(option =>
       option.setName("aisupport")
-        .setDescription("Do you want to use our agent to resolve your problem? (it will be possible to contact a moderator, if the problem is not solved).")
+        .setDescription("Do you want to use our agent to resolve your problem? it will be possible to contact a moderator.")
         .setRequired(true)
     ),
 	async execute(interaction: ChatInputCommandInteraction) {
@@ -30,23 +30,26 @@ const command = {
       return
     }
 
-    await interaction.deferReply();
+    await interaction.deferReply()
 		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-
+		const user = (await interaction.guild?.members.fetch(interaction.user.id))
+		const username = interaction.user.displayName
+		const useai = interaction.options.getBoolean("aisupport")
+		const guild = interaction.guild!
+    await interaction.reply("Your ticket has been open. You will be contacted by the Unico bot via DM with a possibile fix to your problem!")
 		try {
 			const completion = await client.completions.create({
 				agent: process.env.UNICO_TICKET_AGENT_NAME!,
 				query: interaction.options.getString("message")!,
 			});
 
-			const user = interaction?.user?.username;
-      const dmchannel = (await interaction.guild?.members.fetch(user))!.createDM();
-      if(interaction.options.getBoolean("aisupport")){
-  			(await dmchannel).send("Hi "+interaction.user.username+"We recived your ticket, here a possible solution to your problem:\n"+completion.text+"\n"+completion.engine)
-  			await channel.send("**User:** "+interaction.user.displayName+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"**Unico agent response:**"+ completion.text!);
-        await interaction.reply("Your ticket has been open. You will be contacted by the Unico bot via DM with a possibile fix to your problem!")
+      const dmchannel = user?.createDM()!
+
+      if(useai){
+  			(await dmchannel).send("Hi "+username+"We recived your ticket, here a possible solution to your problem:\n"+completion.text+"\n"+completion.engine)
+  			await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"\n**Unico agent response:**\n"+ completion.text!);
       }else{
-       	await channel.send("**User:** "+interaction.user.displayName+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"**Unico agent response:**"+ completion.text!);
+       	await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"\n**Unico agent response:**\n"+ completion.text!);
         await interaction.reply("Your ticket has been open. You will be contacted by UNICO support via DM as soon as possible!")
       }
 		} catch (error: unknown) {
