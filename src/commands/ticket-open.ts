@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel,PermissionsBitField } from "discord.js";
 import dotenv from "dotenv"
 dotenv.config()
 
