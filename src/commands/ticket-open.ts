@@ -36,7 +36,8 @@ const command = {
 		const username = interaction.user.displayName
 		const useai = interaction.options.getBoolean("aisupport")
 		const guild = interaction.guild!
-    await interaction.reply("Your ticket has been open. You will be contacted by the Unico bot via DM with a possibile fix to your problem!")
+		const interactChannel:TextChannel = interaction.channel! as TextChannel
+    await interactChannel.send("Your ticket has been open. You will be contacted by the Unico bot or a moderator via DM with a possibile fix to your problem!")
 		try {
 			const completion = await client.completions.create({
 				agent: process.env.UNICO_TICKET_AGENT_NAME!,
@@ -46,12 +47,12 @@ const command = {
       const dmchannel = user?.createDM()!
 
       if(useai){
-  			(await dmchannel).send("Hi "+username+"We recived your ticket, here a possible solution to your problem:\n"+completion.text+"\n"+completion.engine)
-  			await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"\n**Unico agent response:**\n"+ completion.text!);
+  			(await dmchannel).send("Hi "+username+", We recived your ticket, here a possible solution to your problem:\n"+completion.text+"\n**Engine used:** "+completion.engine)
+  			await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"\n**Unico agent response:**\n"+ completion.text!+"\n**Engine used:** "+completion.engine);
       }else{
-       	await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"\n**Unico agent response:**\n"+ completion.text!);
-        await interaction.reply("Your ticket has been open. You will be contacted by UNICO support via DM as soon as possible!")
+       	await channel.send("**User:** "+username+"\n **Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message"));
       }
+
 		} catch (error: unknown) {
 			console.error(error);
 
@@ -62,9 +63,7 @@ const command = {
 
 			interaction.editReply("An unknown error occurred. If the error persists, please contact UNICO support.");
 		}
-
-
-
+		interaction.deleteReply()
 	},
 };
 
