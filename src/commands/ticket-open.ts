@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel,PermissionsBitField } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import dotenv from "dotenv"
 import UnicoClient from "unico-js";
 
@@ -18,7 +18,7 @@ const command = {
             .setDescription("message to the staff")
             .setRequired(true))
     .addBooleanOption(option =>
-      option.setName("aisupport")
+      option.setName("useunico")
         .setDescription("Do you want to use our agent to resolve your problem? it will be possible to contact a moderator.")
         .setRequired(true)
     ),
@@ -34,24 +34,22 @@ const command = {
 		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
 		const user = (await interaction.guild?.members.fetch(interaction.user.id))
 		const username = interaction.user.displayName
-		const useai = interaction.options.getBoolean("useunico")
-		const guild = interaction.guild!
 		const interactChannel:TextChannel = interaction.channel! as TextChannel
+		const useUnico = interaction.options.getBoolean("useunico")
     await interactChannel.send("Your ticket has been open. You will be contacted by the Unico bot or a moderator via DM with a possibile fix to your problem!")
 		try {
-			const completion = await client.completions.create({
-				agent: process.env.UNICO_TICKET_AGENT_NAME!,
-				query: interaction.options.getString("message")!,
-			});
 
       const dmchannel = user?.createDM()!
+      if(useUnico!){
 
-      if(useai){
+       	const completion = await client.completions.create({
+     			agent: process.env.UNICO_TICKET_AGENT_NAME!,
+     			query: interaction.options.getString("message")!,
+    		});
+
   			(await dmchannel).send("Hi "+username+", We recived your ticket, here a possible solution to your problem:\n"+completion.text+"\n**Engine used:** "+completion.engine)
-  			await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message")+"\n**Unico agent response:**\n"+ completion.text!+"\n**Engine used:** "+completion.engine);
-      }else{
-       	await channel.send("**User:** "+username+"\n **Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message"));
       }
+     	await channel.send("**User:** "+username+"\n**Timestamp:** "+new Date(interaction.createdTimestamp).toDateString()+"\n**Message:** \n"+ interaction.options.getString("message"));
 
 		} catch (error: unknown) {
 			console.error(error);
