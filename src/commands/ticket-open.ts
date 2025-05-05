@@ -34,7 +34,7 @@ const command = {
 		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
 		const user = (await interaction.guild?.members.fetch(interaction.user.id))
 		const username = interaction.user.displayName
-		const useai = interaction.options.getBoolean("aisupport")
+		const useai = interaction.options.getBoolean("useunico")
 		const guild = interaction.guild!
 		const interactChannel:TextChannel = interaction.channel! as TextChannel
     await interactChannel.send("Your ticket has been open. You will be contacted by the Unico bot or a moderator via DM with a possibile fix to your problem!")
