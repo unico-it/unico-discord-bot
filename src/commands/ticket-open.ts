@@ -74,16 +74,11 @@ const command = {
 
         const completion = await client.completions.create({
           agent: process.env.UNICO_TICKET_AGENT_NAME!,
-          query: `Rispondi a questo ticket di ${username}: ${interaction.options.getString("message")}`,
+          query: `Reply to this ticket by ${username}: ${interaction.options.getString("message")}`,
         });
 
         (await dmchannel).send(
-          "Hi " +
-            username +
-            ", We recived your ticket, here a possible solution to your problem:\n" +
-            completion.text +
-            "\n**Engine used:** " +
-            completion.engine,
+          completion.text + "\n**Engine used:** " + completion.engine,
         );
       }
       await channel.send(
@@ -92,7 +87,9 @@ const command = {
           "\n**Timestamp:** " +
           new Date(interaction.createdTimestamp).toDateString() +
           "\n**Message:** \n" +
-          interaction.options.getString("message"),
+          interaction.options.getString("message") +
+          "\n**User has used UNICO?**\t " +
+          useUnico,
       );
     } catch (error: unknown) {
       console.error(error);
