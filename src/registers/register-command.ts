@@ -1,8 +1,8 @@
-import { REST, Routes } from "discord.js";
-import { readdirSync } from "node:fs";
-import { join as path_join } from "node:path";
-import dotenv from "dotenv";
-import path from "path";
+import { REST, Routes } from 'discord.js';
+import { readdirSync } from 'node:fs';
+import { join as path_join } from 'node:path';
+import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 
@@ -16,15 +16,15 @@ export default class CommandRegister {
 
 	public constructor(basePath: string) {
 		if (!this.discordBotToken) {
-			throw new Error("Token is required");
+			throw new Error('Token is required');
 		}
 
 		if (!this.discordServerId) {
-			throw new Error("Guild ID is required");
+			throw new Error('Guild ID is required');
 		}
 
 		if (!this.discordApplicationId) {
-			throw new Error("Application ID is required");
+			throw new Error('Application ID is required');
 		}
 
 		this.basePath = basePath;
@@ -34,8 +34,8 @@ export default class CommandRegister {
 	}
 
 	public addCommand(command_name: string): void {
-		if (!command_name.endsWith(".ts") && !command_name.endsWith(".js")) {
-			command_name += ".ts";
+		if (!command_name.endsWith('.ts') && !command_name.endsWith('.js')) {
+			command_name += '.ts';
 		}
 		this.register();
 	}
@@ -44,13 +44,13 @@ export default class CommandRegister {
 		return this.CommandsNames;
 	}
 
-	private register(): void {
+	private async register(): Promise<void> {
 		this.Commands = [];
 		this.CommandsNames = [];
 
-		const foldersPath = path_join(this.basePath, "commands");
+		const foldersPath = path_join(this.basePath, 'commands');
 		const commandFiles = readdirSync(foldersPath).filter(
-			(file) => !file.endsWith(".d.ts") && (file.endsWith(".ts") || file.endsWith(".js"))
+			(file) => !file.endsWith('.d.ts') && (file.endsWith('.ts') || file.endsWith('.js'))
 		);
 
 		for (const file of commandFiles) {
@@ -59,21 +59,21 @@ export default class CommandRegister {
 
 				delete require.cache[require.resolve(commandPath)];
 
-				const command = require(commandPath);
+				const command = await import(commandPath);
 
 				if (!command) {
 					console.warn(`[WARNING] Could not load command at ${file}.`);
 					continue;
 				}
 
-				if (!("data" in command && "execute" in command)) {
+				if (!('data' in command && 'execute' in command)) {
 					console.warn(`[WARNING] The command at ${file} is missing a required "data" or "execute" property.`);
 					continue;
 				}
 
 				this.Commands.push(command.data.toJSON());
 
-				if ("name" in command) {
+				if ('name' in command) {
 					this.CommandsNames.push(command.name);
 				} else {
 					this.CommandsNames.push(command.data.name);
@@ -84,13 +84,13 @@ export default class CommandRegister {
 		}
 
 		if (this.Commands.length === 0) {
-			console.warn("[WARNING] No commands found to register.");
+			console.warn('[WARNING] No commands found to register.');
 			return;
 		}
 
-		const rest = new REST({ version: "10" }).setToken(this.discordBotToken!);
+		const rest = new REST({ version: '10' }).setToken(this.discordBotToken!);
 
-		(async () => {
+		(async (): Promise<void> => {
 			try {
 				console.log(`Registering ${this.Commands.length} commands...`);
 
@@ -98,9 +98,9 @@ export default class CommandRegister {
 					body: this.Commands,
 				});
 
-				console.log("Commands registered successfully!");
+				console.log('Commands registered successfully!');
 			} catch (error: any) {
-				console.error(`Error registering commands: ${error?.message || "Unknown error"}`);
+				console.error(`Error registering commands: ${error?.message || 'Unknown error'}`);
 				console.error(error);
 			}
 		})();
