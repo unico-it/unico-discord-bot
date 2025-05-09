@@ -8,7 +8,12 @@ import path from "path";
 dotenv.config();
 
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessagePolls,
+	],
 });
 
 declare module "discord.js" {
@@ -32,13 +37,14 @@ for (const file of commandFiles) {
 		const filePath = path.resolve(foldersPath, file);
 		const command = require(filePath);
 
-		if ("data" in command && "execute" in command) {
-			const commandName = command.name || command.data.name;
-			client.commands.set(commandName, command);
-			console.log(`Command '${commandName}' loaded into client collection`);
-		} else {
+		if (!("data" in command && "execute" in command)) {
 			console.warn(`[WARNING] The command at ${filePath} is missing required properties.`);
+			continue;
 		}
+
+		const commandName = command.name || command.data.name;
+		client.commands.set(commandName, command);
+		console.log(`Command '${commandName}' loaded into client collection`);
 	} catch (error) {
 		console.error(`[ERROR] Failed to load command ${file}:`, error);
 	}
@@ -62,13 +68,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		const reply = { content: "There was an error executing this command!", ephemeral: true };
+		const reply = {
+			content: "There was an error executing this command!",
+			ephemeral: true,
+		};
 
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp(reply);
-		} else {
-			await interaction.reply(reply);
+			return;
 		}
+
+		await interaction.reply(reply);
 	}
 });
 

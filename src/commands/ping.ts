@@ -4,7 +4,8 @@ const command = {
 	name: "ping",
 	data: new SlashCommandBuilder().setName("ping").setDescription("Replies with Pong!"),
 	async execute(interaction: ChatInputCommandInteraction) {
-		await interaction.reply("Pong! (" + interaction.user.username + ")");
+		const botLatency = Date.now() - interaction.createdTimestamp;
+		await interaction.reply("Pong! The bot has found " + botLatency + "ms (" + interaction.user.username + ")");
 	},
 };
 

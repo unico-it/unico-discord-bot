@@ -38,6 +38,8 @@ UNICO Discord Bot is designed to integrate UNICO's agents with Discord. This bot
   - **DISCORD_APPLICATION_ID**: The Discord Application ID from [the discord developer portal](https://discord.com/developers/) in the app page of your bot.
   - **UNICO_API_KEY**: Your UNICO Api Key.
   - **UNICO_BASE_URL** (Only if you want to test the bot in staging mode): If not specified the bot will point to production
+  - **UNICO_TICKET_AGENT_NAME**: The name of the agent created in your UNICO dashboard.
+  - **DISCORD_STAFF_TICKET_CHANNEL**: The ID of the channel where you want to send the ticket to.
 
 - **Execute the bot**: `nodemon` package will be used to restart the application when code changes.
   ```bash

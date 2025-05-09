@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import UnicoClient from "unico-js";
 import dotenv from "dotenv";
 
@@ -15,14 +15,22 @@ const command = {
 		.addStringOption((option) =>
 			option.setName("query").setDescription("Query for the specified agent.").setRequired(true)
 		),
-	async execute(interaction: any) {
+	async execute(interaction: ChatInputCommandInteraction) {
 		await interaction.deferReply();
 		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
 
 		try {
+			const agent = interaction.options.getString("agent");
+			const query = interaction.options.getString("query");
+
+			if (!agent || !query) {
+				interaction.editReply("Agent or query cannot be empty.");
+				return;
+			}
+
 			const completion = await client.completions.create({
-				agent: interaction.options.getString("agent"),
-				query: interaction.options.getString("query"),
+				agent,
+				query,
 			});
 
 			interaction.editReply(`**${interaction.options.getString("agent")}**: ${completion.text}`);
