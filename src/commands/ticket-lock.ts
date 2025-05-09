@@ -15,9 +15,9 @@ if (!staffTicketChannel) {
 }
 
 const command = {
-  name: "lockTicketChannel",
+  name: "lockticketchannel",
   data: new SlashCommandBuilder()
-    .setName("lockTicketChannel")
+    .setName("lockticketchannel")
     .setDescription("Lock ticket channel."),
   async execute(interaction: ChatInputCommandInteraction) {
     let permission = (await interaction.guild?.members.fetch(

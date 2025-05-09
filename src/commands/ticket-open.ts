@@ -15,9 +15,9 @@ if (!staffTicketChannel) {
 }
 
 const command = {
-  name: "openTicket",
+  name: "openticket",
   data: new SlashCommandBuilder()
-    .setName("openTicket")
+    .setName("openticket")
     .setDescription("Open a ticket with the moderation team!")
     .addStringOption((option) =>
       option
@@ -27,7 +27,7 @@ const command = {
     )
     .addBooleanOption((option) =>
       option
-        .setName("useUnicoAgent")
+        .setName("useunicoagent")
         .setDescription(
           "Do you want to use our agent to resolve your problem? it will be possible to contact a moderator.",
         )
@@ -53,7 +53,7 @@ const command = {
     const user = await interaction.guild?.members.fetch(interaction.user.id);
     const username = interaction.user.displayName;
     const interactChannel: TextChannel = interaction.channel! as TextChannel;
-    const useUnico = interaction.options.getBoolean("useunico");
+    const useUnico = interaction.options.getBoolean("useunicoagent");
 
     if (useUnico)
       await interactChannel.send(
