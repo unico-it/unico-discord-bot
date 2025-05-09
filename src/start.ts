@@ -8,82 +8,78 @@ import path from "path";
 dotenv.config();
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMessagePolls,
-  ],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessagePolls,
+	],
 });
 
 declare module "discord.js" {
-  export interface Client {
-    commands: Collection<string, any>;
-  }
+	export interface Client {
+		commands: Collection<string, any>;
+	}
 }
 
 client.commands = new Collection();
 
 const commandRegister = new CommandRegister(__dirname);
-console.log(
-  `Registered commands: ${commandRegister.getCommandList.join(", ")}`,
-);
+console.log(`Registered commands: ${commandRegister.getCommandList.join(", ")}`);
 
 const foldersPath = path_join(__dirname, "commands");
 const commandFiles = readdirSync(foldersPath).filter(
-  (file) =>
-    !file.endsWith(".d.ts") && (file.endsWith(".ts") || file.endsWith(".js")),
+	(file) => !file.endsWith(".d.ts") && (file.endsWith(".ts") || file.endsWith(".js"))
 );
 
 for (const file of commandFiles) {
-  try {
-    const filePath = path.resolve(foldersPath, file);
-    const command = require(filePath);
+	try {
+		const filePath = path.resolve(foldersPath, file);
+		const command = require(filePath);
 
-    if (!("data" in command && "execute" in command)) {
-      console.warn(
-        `[WARNING] The command at ${filePath} is missing required properties.`,
-      );
-      continue
-    }
+		if (!("data" in command && "execute" in command)) {
+			console.warn(`[WARNING] The command at ${filePath} is missing required properties.`);
+			continue;
+		}
 
-    const commandName = command.name || command.data.name;
-    client.commands.set(commandName, command);
-    console.log(`Command '${commandName}' loaded into client collection`);
-  } catch (error) {
-    console.error(`[ERROR] Failed to load command ${file}:`, error);
-  }
+		const commandName = command.name || command.data.name;
+		client.commands.set(commandName, command);
+		console.log(`Command '${commandName}' loaded into client collection`);
+	} catch (error) {
+		console.error(`[ERROR] Failed to load command ${file}:`, error);
+	}
 }
 
 client.once(Events.ClientReady, (readyClient) => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isCommand()) return;
+	if (!interaction.isCommand()) return;
 
-  const command = client.commands.get(interaction.commandName);
+	const command = client.commands.get(interaction.commandName);
 
-  if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`);
-    return;
-  }
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`);
+		return;
+	}
 
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    const reply = {
-      content: "There was an error executing this command!",
-      ephemeral: true,
-    };
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		const reply = {
+			content: "There was an error executing this command!",
+			ephemeral: true,
+		};
 
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(reply);
-    } else {
-      await interaction.reply(reply);
-    }
-  }
+		if (interaction.replied || interaction.deferred) {
+			await interaction.followUp(reply);
+			return;
+		}
+
+		await interaction.reply(reply);
+	}
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN);
