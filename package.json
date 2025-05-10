@@ -8,7 +8,9 @@
   "scripts": {
     "dev": "nodemon src/start.ts",
     "build": "tsc",
-    "start": "node dist/src/start.js"
+    "start": "node dist/src/start.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "type": "commonjs",
@@ -18,7 +20,11 @@
     "unico-js": "^0.0.5"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint": "^9.26.0",
     "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.0"
   }
 }
