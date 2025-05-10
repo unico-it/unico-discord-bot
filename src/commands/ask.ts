@@ -17,7 +17,7 @@ const command = {
 			option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
 		)
 		.addStringOption((option) =>
-			option.setName('unico-api-key').setDescription('Your UNICO API key.').setRequired(true)
+			option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(false)
 		),
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
 		await interaction.deferReply({
@@ -29,8 +29,8 @@ const command = {
 			const query = interaction.options.getString('query');
 			const unicoApiKey = interaction.options.getString('unico-api-key');
 
-			if (!agentId || !query || unicoApiKey === null) {
-				interaction.editReply('All fields cannot be empty.');
+			if (!agentId || !query) {
+				interaction.editReply('agent and query cannot be empty.');
 				return;
 			}
 
@@ -39,7 +39,7 @@ const command = {
 				return;
 			}
 
-			const client = new UnicoClient(unicoApiKey, process.env.UNICO_BASE_URL);
+			const client = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
 			const completion = await client.agent(Number(agentId)).completions.create(query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);

@@ -1,5 +1,5 @@
-import type { ChatInputCommandInteraction, TextChannel } from 'discord.js';
-import { SlashCommandBuilder, PermissionsBitField } from 'discord.js';
+import type { ChatInputCommandInteraction, GuildMember, TextChannel } from 'discord.js';
+import { SlashCommandBuilder, PermissionsBitField, MessageFlags } from 'discord.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -13,23 +13,33 @@ const command = {
 	name: 'unlock-ticket-channel',
 	data: new SlashCommandBuilder().setName('unlock-ticket-channel').setDescription('Unlock ticket channel.'),
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-		const permission = (await interaction.guild!.members.fetch(interaction.user.id))!.permissions.has(
+		const user: GuildMember = await interaction.guild!.members.fetch(interaction.user.id);
+		const permission: boolean = user.permissions.has(
 			PermissionsBitField.Flags.Administrator || PermissionsBitField.Flags.ManageChannels
 		);
 
 		if (!permission) {
-			interaction.reply('You do not have the needed permission to use this command!');
+			interaction.reply({
+				content: 'You do not have the needed permission to use this command!',
+				flags: MessageFlags.Ephemeral,
+			});
 			return;
 		}
 
 		const channel: TextChannel = interaction.guild!.channels.cache.get(staffTicketChannel) as TextChannel;
 		if (channel.topic === 'Channel Opened') {
-			await interaction.reply('🔴 The channel is already Open.');
+			await interaction.reply({
+				content: '🔴 The channel is already Open.',
+				flags: MessageFlags.Ephemeral,
+			});
 			return;
 		}
 
 		channel.setTopic('Channel Opened');
-		interaction.reply('Ticket channel open');
+		interaction.reply({
+			content: 'Ticket channel open',
+			flags: MessageFlags.Ephemeral,
+		});
 	},
 };
 
