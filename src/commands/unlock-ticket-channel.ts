@@ -13,7 +13,7 @@ const command = {
 	name: 'unlock-ticket-channel',
 	data: new SlashCommandBuilder().setName('unlock-ticket-channel').setDescription('Unlock ticket channel.'),
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-		const permission = (await interaction.guild?.members.fetch(interaction.user.id))!.permissions.has(
+		const permission = (await interaction.guild!.members.fetch(interaction.user.id))!.permissions.has(
 			PermissionsBitField.Flags.Administrator || PermissionsBitField.Flags.ManageChannels
 		);
 

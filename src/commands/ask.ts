@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
-import { SlashCommandBuilder } from 'discord.js';
+import { MessageFlags, SlashCommandBuilder } from 'discord.js';
 import UnicoClient from 'unico-js';
 import dotenv from 'dotenv';
 
@@ -11,30 +11,38 @@ const command = {
 		.setName('ask')
 		.setDescription('Replies with the response to the query!')
 		.addStringOption((option) =>
-			option.setName('agent').setDescription('Name of the agent in your UNICO account.').setRequired(true)
+			option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true)
 		)
 		.addStringOption((option) =>
 			option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
+		)
+		.addStringOption((option) =>
+			option.setName('unico-api-key').setDescription('Your UNICO API key.').setRequired(true)
 		),
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-		await interaction.deferReply();
-		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 
 		try {
-			const agent = interaction.options.getString('agent');
+			const agentId = interaction.options.getString('agent');
 			const query = interaction.options.getString('query');
+			const unicoApiKey = interaction.options.getString('unico-api-key');
 
-			if (!agent || !query) {
-				interaction.editReply('Agent or query cannot be empty.');
+			if (!agentId || !query || unicoApiKey === null) {
+				interaction.editReply('All fields cannot be empty.');
 				return;
 			}
 
-			const completion = await client.completions.create({
-				agent,
-				query,
-			});
+			if (isNaN(Number(agentId))) {
+				interaction.editReply('Agent ID must be a number.');
+				return;
+			}
 
-			interaction.editReply(`**${interaction.options.getString('agent')}**: ${completion.text}`);
+			const client = new UnicoClient(unicoApiKey, process.env.UNICO_BASE_URL);
+			const completion = await client.agent(Number(agentId)).completions.create(query);
+
+			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);
 		} catch (error: unknown) {
 			console.error(error);
 

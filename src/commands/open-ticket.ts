@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction, TextChannel } from 'discord.js';
-import { SlashCommandBuilder } from 'discord.js';
+import { MessageFlags, SlashCommandBuilder } from 'discord.js';
 import dotenv from 'dotenv';
 import UnicoClient from 'unico-js';
 
@@ -33,21 +33,22 @@ const command = {
 			return;
 		}
 
-		await interaction.deferReply();
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
 		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-		const user = await interaction.guild?.members.fetch(interaction.user.id);
+		const user = await interaction.guild!.members.fetch(interaction.user.id);
 		const username = interaction.user.displayName;
-		const interactChannel: TextChannel = interaction.channel! as TextChannel;
 		const useUnico = interaction.options.getBoolean('useunicoagent');
 
 		if (useUnico) {
-			await interactChannel.send(
+			await interaction.editReply(
 				'Your support ticket has been opened. You will be contacted by a UNICO Agent with a possible fix for your problem!'
 			);
 		}
 
 		if (!useUnico) {
-			await interactChannel.send(
+			await interaction.editReply(
 				'Your support ticket has been opened. You will be contacted by a moderator via DM with a possible fix for your problem!'
 			);
 		}
@@ -55,29 +56,26 @@ const command = {
 		try {
 			const dmchannel = user!.createDM();
 
-			if (useUnico!) {
+			if (useUnico) {
 				if (interaction.options.getString('message') === null) {
-					await interaction.reply('The message text is missing.');
+					await interaction.editReply('The message text is missing.');
 					throw Error('The message sent by the user was invalid!');
 				}
 
-				const completion = await client.completions.create({
-					agent: process.env.UNICO_TICKET_AGENT_NAME!,
-					query: `Reply to this ticket by ${username}: ${interaction.options.getString('message')}`,
-				});
+				const completion = await client
+					.agent(Number(process.env.UNICO_TICKET_AGENT_ID!))
+					.completions.create(`Reply to this ticket by ${username}: ${interaction.options.getString('message')}`);
 
 				(await dmchannel).send(completion.text + '\n**Engine used:** ' + completion.engine);
 			}
 
 			await channel.send(
-				'**User:** ' +
-					username +
-					'\n**Timestamp:** ' +
-					new Date(interaction.createdTimestamp).toDateString() +
-					'\n**Message:** \n' +
-					interaction.options.getString('message') +
-					'\n**User has used UNICO?**\t ' +
-					useUnico
+				'------------------------------------------------------------------------------------------------------\n' +
+					`**User:** ${username}\n` +
+					`**Timestamp:** ${new Date(interaction.createdTimestamp).toDateString()}\n` +
+					`**Message:** ${interaction.options.getString('message')}\n` +
+					`**User has used UNICO?** ${useUnico}\n` +
+					'------------------------------------------------------------------------------------------------------\n'
 			);
 		} catch (error: unknown) {
 			console.error(error);
@@ -89,8 +87,6 @@ const command = {
 
 			interaction.editReply('An unknown error occurred. If the error persists, please contact UNICO support.');
 		}
-
-		interaction.deleteReply();
 	},
 };
 

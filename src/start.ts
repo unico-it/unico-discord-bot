@@ -71,7 +71,7 @@ async function main(): Promise<void> {
 			console.error(error);
 			const reply = {
 				content: 'There was an error executing this command!',
-				ephemeral: true,
+				ephemeral: true
 			};
 
 			if (interaction.replied || interaction.deferred) {
