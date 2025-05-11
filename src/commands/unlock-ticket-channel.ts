@@ -26,14 +26,19 @@ const command = {
 			return;
 		}
 
+		const everyoneRoleID = await interaction.guild?.roles.everyone.id
 		const channel: TextChannel = interaction.guild!.channels.cache.get(staffTicketChannel) as TextChannel;
-		if (channel.topic === 'Channel Opened') {
+		if (channel.permissionsFor(everyoneRoleID!)?.has(PermissionsBitField.Flags.SendMessages)) {
 			await interaction.reply({
 				content: '🔴 The channel is already Open.',
 				flags: MessageFlags.Ephemeral,
 			});
 			return;
 		}
+
+		channel.permissionOverwrites.edit(everyoneRoleID!,{
+      SendMessages: true
+		}).catch(console.error);
 
 		channel.setTopic('Channel Opened');
 		interaction.reply({
