@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction, GuildMember, TextChannel } from 'discord.js';
-import { SlashCommandBuilder, PermissionsBitField, MessageFlags } from 'discord.js';
+import { SlashCommandBuilder, PermissionsBitField, MessageFlags, BitField } from 'discord.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -25,15 +25,20 @@ const command = {
 			});
 			return;
 		}
+		const everyoneRoleID = await interaction.guild?.roles.everyone.id
 
 		const channel: TextChannel = interaction.guild!.channels.cache.get(staffTicketChannel) as TextChannel;
-		if (channel.topic === 'Channel Closed') {
+		if (!channel.permissionsFor(everyoneRoleID!)?.has(PermissionsBitField.Flags.SendMessages)) {
 			await interaction.reply({
 				content: '🔴 The channel is already closed.',
 				flags: MessageFlags.Ephemeral,
 			});
 			return;
 		}
+
+		channel.permissionOverwrites.edit(everyoneRoleID!,{
+      SendMessages: false
+		}).then(()=>channel.setTopic('Channel Closed')).catch(console.error);
 
 		channel.setTopic('Channel Closed');
 		interaction.reply({
