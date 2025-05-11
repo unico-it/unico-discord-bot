@@ -99,8 +99,12 @@ export default class CommandRegister {
 				});
 
 				console.log('Commands registered successfully!');
-			} catch (error: any) {
-				console.error(`Error registering commands: ${error?.message || 'Unknown error'}`);
+			} catch (error: unknown) {
+				if (error instanceof Error) {
+					console.error(`Error registering commands: ${error.message}`);
+					return;
+				}
+
 				console.error(error);
 			}
 		})();

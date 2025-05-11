@@ -1,5 +1,5 @@
-import type { ChatInputCommandInteraction, TextChannel } from 'discord.js';
-import { SlashCommandBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction, GuildMember, TextChannel } from 'discord.js';
+import { MessageFlags, SlashCommandBuilder } from 'discord.js';
 import dotenv from 'dotenv';
 import UnicoClient from 'unico-js';
 
@@ -29,56 +29,52 @@ const command = {
 		const channel: TextChannel = interaction.guild!.channels.cache.get(staffTicketChannel) as TextChannel;
 
 		if (channel.topic === 'Channel Closed') {
-			await interaction.reply('🔴 Your ticket could not be open. please try again when we start taking ticket again.');
+			await interaction.editReply('🔴 Your ticket could not be open. please try again when we start taking ticket again.');
 			return;
 		}
 
-		await interaction.deferReply();
-		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-		const user = await interaction.guild?.members.fetch(interaction.user.id);
-		const username = interaction.user.displayName;
-		const interactChannel: TextChannel = interaction.channel! as TextChannel;
-		const useUnico = interaction.options.getBoolean('useunicoagent');
-
-		if (useUnico) {
-			await interactChannel.send(
-				'Your support ticket has been opened. You will be contacted by a UNICO Agent with a possible fix for your problem!'
-			);
-		}
-
-		if (!useUnico) {
-			await interactChannel.send(
-				'Your support ticket has been opened. You will be contacted by a moderator via DM with a possible fix for your problem!'
-			);
-		}
+		await interaction.deferReply({
+			flags: MessageFlags.Ephemeral,
+		});
+		const client: UnicoClient = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
+		const user: GuildMember = await interaction.guild!.members.fetch(interaction.user.id);
+		const username: string = interaction.user.displayName;
+		const useUnico: boolean | null = interaction.options.getBoolean('useunicoagent');
 
 		try {
-			const dmchannel = user!.createDM();
-
-			if (useUnico!) {
-				if (interaction.options.getString('message') === null) {
-					await interaction.reply('The message text is missing.');
-					throw Error('The message sent by the user was invalid!');
-				}
-
-				const completion = await client.completions.create({
-					agent: process.env.UNICO_TICKET_AGENT_NAME!,
-					query: `Reply to this ticket by ${username}: ${interaction.options.getString('message')}`,
-				});
-
-				(await dmchannel).send(completion.text + '\n**Engine used:** ' + completion.engine);
+			const dmchannel = await user.createDM();
+			if (interaction.options.getString('message') === null) {
+				await interaction.editReply('The message text is missing.');
+				throw Error('The message sent by the user was invalid!');
 			}
 
-			await channel.send(
-				'**User:** ' +
-					username +
-					'\n**Timestamp:** ' +
-					new Date(interaction.createdTimestamp).toDateString() +
-					'\n**Message:** \n' +
-					interaction.options.getString('message') +
-					'\n**User has used UNICO?**\t ' +
-					useUnico
-			);
+			const completion = await client
+				.agent(Number(process.env.UNICO_TICKET_AGENT_ID!))
+				.completions.create(`Reply to this ticket by ${username}: ${interaction.options.getString('message')}`);
+
+			if (useUnico) {
+				await interaction.editReply(
+					'Your support ticket has been opened. You will be contacted by a UNICO Agent with a possible fix for your problem!'
+				);
+				dmchannel.send(completion.text);
+			}
+
+			if (!useUnico) {
+				await interaction.editReply(
+					'Your support ticket has been opened. You will be contacted by a moderator via DM with a possible fix for your problem!'
+				);
+			}
+
+			await channel.send({
+				content:
+					'>>> ## New Ticket Opened\n' +
+					`**User:** ${username}\n` +
+					`**Timestamp:** ${new Date(interaction.createdTimestamp).toDateString()}\n` +
+					`**Message:** ${interaction.options.getString('message')}\n` +
+					`**User has used UNICO?** ${useUnico ? 'Yes' : 'No'}\n` +
+					`## UNICO Support Agent Response\n ${completion.text}`,
+				allowedMentions: { parse: [] },
+			});
 		} catch (error: unknown) {
 			console.error(error);
 
@@ -89,8 +85,6 @@ const command = {
 
 			interaction.editReply('An unknown error occurred. If the error persists, please contact UNICO support.');
 		}
-
-		interaction.deleteReply();
 	},
 };
 
