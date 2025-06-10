@@ -1,0 +1,46 @@
+name: Deploy to VPS with Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/ec2-user/UNICO/unico-discord-bot
+            
+            git fetch origin
+
+            git reset --hard origin/main
+            
+            docker stop unico-discord-bot-container 2>/dev/null || true
+            docker rm unico-discord-bot-container 2>/dev/null || true
+            
+            docker rmi unico-discord-bot:latest 2>/dev/null || true
+            
+            docker build -t unico-discord-bot:latest .
+            
+            docker run -d \
+              --name unico-discord-bot-container \
+              --restart always \
+              --env-file .env \
+              unico-discord-bot:latest
+            
+            sleep 5
+            docker ps | grep unico-discord-bot-container
+            
+            docker logs unico-discord-bot-container --tail 20
+
+            docker image prune -af
