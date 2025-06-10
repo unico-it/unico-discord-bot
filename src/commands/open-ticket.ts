@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteraction, GuildMember, TextChannel } from 'discord.js';
+import type { ChatInputCommandInteraction, TextChannel } from 'discord.js';
 import { MessageFlags, SlashCommandBuilder } from 'discord.js';
 import dotenv from 'dotenv';
 import UnicoClient from 'unico-js';
@@ -28,21 +28,14 @@ const command = {
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
 		const channel: TextChannel = interaction.guild!.channels.cache.get(staffTicketChannel) as TextChannel;
 
-		if (channel.topic === 'Channel Closed') {
-			await interaction.editReply('🔴 Your ticket could not be open. please try again when we start taking ticket again.');
-			return;
-		}
-
 		await interaction.deferReply({
 			flags: MessageFlags.Ephemeral,
 		});
 		const client: UnicoClient = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-		const user: GuildMember = await interaction.guild!.members.fetch(interaction.user.id);
 		const username: string = interaction.user.displayName;
 		const useUnico: boolean | null = interaction.options.getBoolean('useunicoagent');
 
 		try {
-			const dmchannel = await user.createDM();
 			if (interaction.options.getString('message') === null) {
 				await interaction.editReply('The message text is missing.');
 				throw Error('The message sent by the user was invalid!');
@@ -53,10 +46,11 @@ const command = {
 				.completions.create(`Reply to this ticket by ${username}: ${interaction.options.getString('message')}`);
 
 			if (useUnico) {
-				await interaction.editReply(
-					'Your support ticket has been opened. You will be contacted by a UNICO Agent with a possible fix for your problem!'
-				);
-				dmchannel.send(completion.text);
+				await interaction.editReply({
+					content:
+						`>>> ## Your support ticket has been opened. Here the response:\n ${completion.text}`,
+					allowedMentions: { parse: [] },
+				});
 			}
 
 			if (!useUnico) {
