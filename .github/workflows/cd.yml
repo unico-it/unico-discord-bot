@@ -1,4 +1,4 @@
-name: Deploy to VPS with Docker
+name: CD Pipeline
 
 on:
   push:
