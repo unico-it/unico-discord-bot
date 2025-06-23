@@ -8,7 +8,7 @@ const command = {
   name: 'clear',
   data: new SlashCommandBuilder()
     .setName('clear')
-    .setDescription('Clears the last 100 messages from a channel. This improves readability in channels where the user sends commands to bots, making them readable by all users.')
+    .setDescription('Cleans up the last 100 messages to make the channel more readable for everyone.')
     .addChannelOption((input) => input.setName('channel').addChannelTypes(ChannelType.GuildText).setDescription('Name of the channel to clear').setRequired(true)),
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     await interaction.deferReply({
