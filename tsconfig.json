@@ -28,6 +28,7 @@
         "src/commands/ping.ts",
         "src/commands/ask.ts",
         "src/commands/open-ticket.ts",
+        "src/commands/clear.ts",
         "src/registers/register-command.ts",
         "src/utils/enums.ts",
     ],
