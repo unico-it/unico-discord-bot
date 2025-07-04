@@ -5,6 +5,30 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+let cachedAgents: any[] | undefined = undefined;
+
+async function loadAgents() {
+  try {
+    const client = new UnicoClient(
+      process.env.UNICO_API_KEY!,
+      process.env.UNICO_BASE_URL
+    );
+    cachedAgents = await client.agents.retrieve();
+    console.log("✅ Agents loaded:", cachedAgents.length);
+  } catch (err) {
+    console.error("❌ Failed to load agents:", err);
+  }
+
+}
+
+async function main(){
+	await loadAgents();
+	cachedAgents = cachedAgents?.map(agent => {name:agent.name; value: agent.id})
+}
+
+//! DO NOT DELETE ↓
+//main()  //? This function call is here momentarely for testing purpose, will be deleted if not needed.
+
 const command = {
   name: 'ask',
   data: new SlashCommandBuilder()
@@ -17,35 +41,10 @@ const command = {
       option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(true)
     )
     .addStringOption((option) =>
-      option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true).setAutocomplete(true)
+      option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
 		),
 	async autocomplete(interaction:AutocompleteInteraction):Promise<void> {
-    const focusedOption = interaction.options.getFocused(true);
-    const unicoApiKey = interaction.options.getString('unico-api-key');
-    const searchTerm = focusedOption.value.toLowerCase();
-
-    if (!unicoApiKey) {
-        await interaction.respond([{ name: 'Please provide a UNICO API key first.', value: 'no-api-key' }]);
-        return;
-    }
-
-    try {
-        const unicoClient = new UnicoClient(unicoApiKey, process.env.UNICO_BASE_URL);
-        const agents = await unicoClient.agents.retrieve();
-
-        const filteredChoices = agents
-            .filter(agent => agent.name.toLowerCase().includes(searchTerm))
-            .map(agent => ({
-                name: agent.name,
-                value: agent.id,
-            }))
-            .slice(0, 25); // Discord autocomplete limits to 25 choices
-
-        await interaction.respond(filteredChoices);
-    } catch (error) {
-        await interaction.respond([{ name: 'Error fetching agents.', value: 'error' }]);
-    }
-
+		const choice = interaction.options.getString('agent')
 	},
 
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -69,6 +68,7 @@ const command = {
 			}
 
 			const client = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
+			//const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);  //! DO NOT DELETE THIS COMMENT.
 			const completion = await client.agent(Number(agentId)).completions.create(query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);
