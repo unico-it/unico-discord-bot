@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, Collection } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Collection, ActivityType } from 'discord.js';
 import CommandRegister from './registers/register-command';
 import { readdirSync } from 'node:fs';
 import { join as path_join } from 'node:path';
@@ -84,6 +84,16 @@ async function main(): Promise<void> {
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
+
+	client?.user?.setPresence({
+			activities: [{
+					name: 'Using Unico',
+					type: ActivityType.Custom,
+					url: 'https://theunico.it/'
+			}],
+			status: 'online'
+	});
+
 }
 
 main().catch((err) => {

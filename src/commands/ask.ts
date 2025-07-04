@@ -21,8 +21,8 @@ const command = {
 		),
 	async autocomplete(interaction:AutocompleteInteraction):Promise<void> {
     const focusedOption = interaction.options.getFocused(true);
-    const unicoApiKey = interaction.options.getString('unico-api-key'); // Get the API key the user typed
-    const searchTerm = focusedOption.value.toLowerCase(); // What the user has typed so far
+    const unicoApiKey = interaction.options.getString('unico-api-key');
+    const searchTerm = focusedOption.value.toLowerCase();
 
     if (!unicoApiKey) {
         await interaction.respond([{ name: 'Please provide a UNICO API key first.', value: 'no-api-key' }]);
@@ -43,7 +43,6 @@ const command = {
 
         await interaction.respond(filteredChoices);
     } catch (error) {
-        console.error('Error during autocomplete for agents:', error);
         await interaction.respond([{ name: 'Error fetching agents.', value: 'error' }]);
     }
 
