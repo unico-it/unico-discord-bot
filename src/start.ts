@@ -4,6 +4,7 @@ import { readdirSync } from 'node:fs';
 import { join as path_join } from 'node:path';
 import dotenv from 'dotenv';
 import path from 'path';
+import rebuildCache from './utils/fetchAgents';
 
 dotenv.config();
 
@@ -24,8 +25,14 @@ declare module 'discord.js' {
 
 client.commands = new Collection();
 
+
+
 async function main(): Promise<void> {
 	const commandRegister = new CommandRegister(__dirname);
+
+	const loaded_agents = await rebuildCache()
+	console.log(loaded_agents)
+
 	console.log(`Registered commands: ${commandRegister.getCommandList.join(', ')}`);
 
 	const foldersPath = path_join(__dirname, 'commands');

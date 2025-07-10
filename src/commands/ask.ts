@@ -5,29 +5,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-let cachedAgents: any[] | undefined = undefined;
-
-async function loadAgents() {
-  try {
-    const client = new UnicoClient(
-      process.env.UNICO_API_KEY!,
-      process.env.UNICO_BASE_URL
-    );
-    cachedAgents = await client.agents.retrieve();
-    console.log("✅ Agents loaded:", cachedAgents.length);
-  } catch (err) {
-    console.error("❌ Failed to load agents:", err);
-  }
-
-}
-
-async function main(){
-	await loadAgents();
-	cachedAgents = cachedAgents?.map(agent => {name:agent.name; value: agent.id})
-}
-
-//! DO NOT DELETE ↓
-//main()  //? This function call is here momentarely for testing purpose, will be deleted if not needed.
 
 const command = {
   name: 'ask',
@@ -41,10 +18,10 @@ const command = {
       option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(true)
     )
     .addStringOption((option) =>
-      option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
+      option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true).setAutocomplete(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
 		),
 	async autocomplete(interaction:AutocompleteInteraction):Promise<void> {
-		const choice = interaction.options.getString('agent')
+
 	},
 
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -66,6 +43,7 @@ const command = {
 				interaction.editReply('Agent ID must be a number.');
 				return;
 			}
+
 
 			const client = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
 			//const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);  //! DO NOT DELETE THIS COMMENT.
