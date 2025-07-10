@@ -40,7 +40,7 @@ const command = {
 			}
 
 			const client = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-			const completion = await client.agent(Number(agentId)).completions.create(query);
+			const completion = await client.agents.completions.create(Number(agentId), query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);
 		} catch (error: unknown) {

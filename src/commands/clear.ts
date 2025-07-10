@@ -21,7 +21,6 @@ const command = {
     const messages = (await channel.messages.fetch({ limit: 100 })).filter(m => !m.pinned);
     await channel.bulkDelete(messages, true);
 
-
     await interaction.editReply({
       content: `🧹 Done! Messages deleted from #${channel.name}.`,
     });
