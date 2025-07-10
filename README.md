@@ -37,6 +37,7 @@ UNICO Discord Bot is designed to integrate UNICO's agents with Discord. This bot
   - **DISCORD_SERVER_ID**: Your Discord Server ID.
   - **DISCORD_APPLICATION_ID**: The Discord Application ID from [the discord developer portal](https://discord.com/developers/) in the app page of your bot.
   - **DISCORD_STAFF_TICKET_CHANNEL**: The ID of the channel where you want to send the ticket to.
+  - **DISCORD_MOD_ROLE_ID**: The ID of the moderator role. This role can clear messages from all the channels.
   - **UNICO_API_KEY**: Your UNICO Api Key.
   - **UNICO_BASE_URL** (Only if you want to test the bot in staging mode): If not specified the bot will point to production
   - **UNICO_TICKET_AGENT_ID**: The id of the support agent created in your UNICO dashboard.
