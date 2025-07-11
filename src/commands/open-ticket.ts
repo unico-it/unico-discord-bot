@@ -42,8 +42,8 @@ const command = {
 			}
 
 			const completion = await client
-				.agent(Number(process.env.UNICO_TICKET_AGENT_ID!))
-				.completions.create(`Reply to this ticket by ${username}: ${interaction.options.getString('message')}`);
+				.agents
+				.completions.create(Number(process.env.UNICO_TICKET_AGENT_ID!), `Reply to this ticket by ${username}: ${interaction.options.getString('message')}`);
 
 			if (useUnico) {
 				await interaction.editReply({

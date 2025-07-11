@@ -36,10 +36,12 @@ UNICO Discord Bot is designed to integrate UNICO's agents with Discord. This bot
   - **DISCORD_BOT_TOKEN**: Discord token of the bot from [the discord developer portal](https://discord.com/developers/).
   - **DISCORD_SERVER_ID**: Your Discord Server ID.
   - **DISCORD_APPLICATION_ID**: The Discord Application ID from [the discord developer portal](https://discord.com/developers/) in the app page of your bot.
+  - **DISCORD_STAFF_TICKET_CHANNEL**: The ID of the channel where you want to send the ticket to.
+  - **DISCORD_MOD_ROLE_ID**: The ID of the moderator role. This role can clear messages from all the channels.
   - **UNICO_API_KEY**: Your UNICO Api Key.
   - **UNICO_BASE_URL** (Only if you want to test the bot in staging mode): If not specified the bot will point to production
   - **UNICO_TICKET_AGENT_ID**: The id of the support agent created in your UNICO dashboard.
-  - **DISCORD_STAFF_TICKET_CHANNEL**: The ID of the channel where you want to send the ticket to.
+  - **UNICO_SUMMARIZER_AGENT_ID**: The id of the summarizer agent created in your UNICO dashboard.
 
 - **Execute the bot**: `nodemon` package will be used to restart the application when code changes.
   ```bash
@@ -58,7 +60,7 @@ git pull origin main --rebase
 
 ## Contributing
 
-If you want to contribute to **UNICO Python package**, follow these steps:
+If you want to contribute to **UNICO Discord Bot**, follow these steps:
 
 1. Create a new branch for your changes (`git checkout -b your-branch-name`).
 2. Make your changes and commit them (`git commit -m 'Changed something'`).
