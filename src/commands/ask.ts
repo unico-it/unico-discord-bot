@@ -20,8 +20,8 @@ const command = {
     .addStringOption((option) =>
       option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true).setAutocomplete(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
 		),
-	async autocomplete(interaction:AutocompleteInteraction):Promise<void> {
-
+	async autocomplete(_: AutocompleteInteraction):Promise<void> {
+		// DO NOTHING FOR NOW
 	},
 
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -46,8 +46,7 @@ const command = {
 
 
 			const client = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-			//const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);  //! DO NOT DELETE THIS COMMENT.
-			const completion = await client.agent(Number(agentId)).completions.create(query);
+			const completion = await client.agents.completions.create(Number(agentId), query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);
 		} catch (error: unknown) {

@@ -30,8 +30,8 @@ client.commands = new Collection();
 async function main(): Promise<void> {
 	const commandRegister = new CommandRegister(__dirname);
 
-	const loaded_agents = await rebuildCache()
-	console.log(loaded_agents)
+	const loaded_agents = await rebuildCache();
+	console.log(loaded_agents);
 
 	console.log(`Registered commands: ${commandRegister.getCommandList.join(', ')}`);
 

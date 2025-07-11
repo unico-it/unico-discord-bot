@@ -1,16 +1,16 @@
-import UnicoClient from "unico-js";
+import UnicoClient from 'unico-js';
 import dotenv from 'dotenv';
-import * as fs from 'node:fs'
+import * as fs from 'node:fs';
 
 dotenv.config();
 
 let cachedAgents: any[] | undefined = undefined;
 
-export default async function rebuildCache() : Promise<Boolean> {
+export default async function rebuildCache() : Promise<boolean> {
 
   //Checks if the cache is alredy been generated.
   let access = false;
-  fs.access('./agent_cache.unico', err => err ? access=false : access=true)
+  fs.access('./agent_cache.unico', err => err ? access=false : access=true);
 
   //If the cache exist will skip
   if(access) return true;
@@ -25,21 +25,21 @@ export default async function rebuildCache() : Promise<Boolean> {
       process.env.UNICO_BASE_URL
     );
     cachedAgents = await client.agents.retrieve();
-    console.log("✅ Agents loaded:", cachedAgents.length);
+    console.log('✅ Agents loaded:', cachedAgents.length);
   } catch (err) {
-    console.error("❌ Failed to load agents:", err);
+    console.error('❌ Failed to load agents:', err);
     return false;
   }
 
-  let ret:any[] = []
+  const ret:any[] = [];
 
   cachedAgents?.forEach((agent)=>{
-    ret.push({name:agent.name, value: agent.id})
-  })
+    ret.push({name:agent.name, value: agent.id});
+  });
 
   fs.writeFile('./agent_cache.unico', JSON.stringify(ret),err => {
     if(err) console.error(err);
-  })
+  });
 
   return true;
 }
