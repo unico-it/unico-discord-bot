@@ -1,20 +1,21 @@
 import type { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import { MessageFlags, SlashCommandBuilder } from 'discord.js';
 import UnicoClient from 'unico-js';
+import type { Agent, Completion } from 'unico-js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-let cachedAgents: any[] = [];
+let serverAgents: Agent[] = [];
 
 async function preloadAgents(): Promise<void> {
   try {
     const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-    cachedAgents = await client.agents.retrieve();
-    console.log(`Preloaded ${cachedAgents.length} agents`);
+    serverAgents = await client.agents.retrieve();
+    console.log(`Preloaded ${serverAgents.length} agents`);
   } catch (error) {
     console.error('Failed to preload agents:', error);
-    cachedAgents = [];
+    serverAgents = [];
   }
 }
 
@@ -26,10 +27,11 @@ const command = {
 		.setName('ask')
 		.setDescription('Replies with the response to the query!')
 		.addStringOption((option) =>
-			option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
+			option.setName('agent').setDescription('Agent ID in UNICO. Autocomplete shows server agents, \
+			enter ID manually if using your API key.').setRequired(true).setAutocomplete(true)
 		)
 		.addStringOption((option) =>
-			option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true).setAutocomplete(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
+			option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
 		)
 		.addStringOption((option) =>
 			option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(false)
@@ -37,19 +39,18 @@ const command = {
 	async autocomplete(interaction: AutocompleteInteraction):Promise<void> {
 		const focusedValue = interaction.options.getFocused();
 
-		const filtered = cachedAgents.filter((agent) =>
+		const filtered = serverAgents.filter((agent) =>
 			agent.name.toLowerCase().includes(focusedValue.toLowerCase()) ||
 			String(agent.id).includes(focusedValue)
 		);
 
 		await interaction.respond(
-		filtered.slice(0, 25).map((agent) => ({
-			name: `${agent.name} (${agent.id})`,
-			value: String(agent.id),
-		}))
+			filtered.slice(0, 25).map((agent) => ({
+				name: `${agent.name} (${agent.id})`,
+				value: String(agent.id),
+			}))
 		);
 	},
-
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
 		await interaction.deferReply({
 			flags: MessageFlags.Ephemeral,
@@ -70,8 +71,8 @@ const command = {
 				return;
 			}
 
-			const client = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-			const completion = await client.agents.completions.create(Number(agentId), query);
+			const client: UnicoClient = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
+			const completion: Completion = await client.agents.completions.create(Number(agentId), query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);
 		} catch (error: unknown) {

@@ -55,32 +55,32 @@ async function main(): Promise<void> {
 		console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 	});
 
+	client.on(Events.InteractionCreate, async (interaction) => {
+		if (interaction.isAutocomplete()) {
+			const command = client.commands.get(interaction.commandName);
+			if (!command || !command.autocomplete) return;
 
+			try {
+				await command.autocomplete(interaction);
+			} catch (error) {
+				console.error('Autocomplete error:', error);
 
-client.on(Events.InteractionCreate, async (interaction) => {
-	if (interaction.isAutocomplete()) {
-		const command = client.commands.get(interaction.commandName);
-		if (!command || !command.autocomplete) return;
-
-		try {
-			await command.autocomplete(interaction);
-		} catch (error) {
-			console.error('Autocomplete error:', error);
-
-			if (!interaction.responded) {
-				try {
-					await interaction.respond([]);
-				} catch (responseError) {
-					console.error('Error sending empty autocomplete response:', responseError);
+				if (!interaction.responded) {
+					try {
+						await interaction.respond([]);
+					} catch (responseError) {
+						console.error('Error sending empty autocomplete response:', responseError);
+					}
 				}
 			}
+			return;
 		}
-		return;
-	}
-});
+	});
 
 	client.on(Events.InteractionCreate, async (interaction) => {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isCommand()){
+			return;
+		}
 
 		const command = client.commands.get(interaction.commandName);
 
@@ -108,16 +108,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
-
 	client!.user!.setPresence({
 			activities: [{
-					name: 'Using UNICO',
-					type: ActivityType.Custom,
+					name: 'UNICO',
+					type: ActivityType.Playing,
 					url: 'https://theunico.it/'
 			}],
 			status: 'online'
 	});
-
 }
 
 main().catch((err) => {
