@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, Collection } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Collection, ActivityType } from 'discord.js';
 import CommandRegister from './registers/register-command';
 import { readdirSync } from 'node:fs';
 import { join as path_join } from 'node:path';
@@ -56,7 +56,31 @@ async function main(): Promise<void> {
 	});
 
 	client.on(Events.InteractionCreate, async (interaction) => {
-		if (!interaction.isCommand()) return;
+		if (interaction.isAutocomplete()) {
+			const command = client.commands.get(interaction.commandName);
+			if (!command || !command.autocomplete) return;
+
+			try {
+				await command.autocomplete(interaction);
+			} catch (error) {
+				console.error('Autocomplete error:', error);
+
+				if (!interaction.responded) {
+					try {
+						await interaction.respond([]);
+					} catch (responseError) {
+						console.error('Error sending empty autocomplete response:', responseError);
+					}
+				}
+			}
+			return;
+		}
+	});
+
+	client.on(Events.InteractionCreate, async (interaction) => {
+		if (!interaction.isCommand()){
+			return;
+		}
 
 		const command = client.commands.get(interaction.commandName);
 
@@ -84,6 +108,14 @@ async function main(): Promise<void> {
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
+	client!.user!.setPresence({
+			activities: [{
+					name: 'UNICO',
+					type: ActivityType.Playing,
+					url: 'https://theunico.it/'
+			}],
+			status: 'online'
+	});
 }
 
 main().catch((err) => {
