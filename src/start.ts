@@ -24,13 +24,8 @@ declare module 'discord.js' {
 
 client.commands = new Collection();
 
-
-
 async function main(): Promise<void> {
 	const commandRegister = new CommandRegister(__dirname);
-
-
-
 	console.log(`Registered commands: ${commandRegister.getCommandList.join(', ')}`);
 
 	const foldersPath = path_join(__dirname, 'commands');
@@ -63,7 +58,6 @@ async function main(): Promise<void> {
 
 
 client.on(Events.InteractionCreate, async (interaction) => {
-	// Gestione autocompletamento
 	if (interaction.isAutocomplete()) {
 		const command = client.commands.get(interaction.commandName);
 		if (!command || !command.autocomplete) return;
@@ -73,7 +67,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		} catch (error) {
 			console.error('Autocomplete error:', error);
 
-			// Rispondi solo se non hai giÃ risposto
 			if (!interaction.responded) {
 				try {
 					await interaction.respond([]);
