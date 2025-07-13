@@ -4,7 +4,6 @@ import { readdirSync } from 'node:fs';
 import { join as path_join } from 'node:path';
 import dotenv from 'dotenv';
 import path from 'path';
-import rebuildCache from './utils/fetchAgents';
 
 dotenv.config();
 
@@ -30,8 +29,7 @@ client.commands = new Collection();
 async function main(): Promise<void> {
 	const commandRegister = new CommandRegister(__dirname);
 
-	const loaded_agents = await rebuildCache();
-	console.log(loaded_agents);
+
 
 	console.log(`Registered commands: ${commandRegister.getCommandList.join(', ')}`);
 
@@ -61,6 +59,32 @@ async function main(): Promise<void> {
 	client.once(Events.ClientReady, (readyClient) => {
 		console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 	});
+
+
+
+client.on(Events.InteractionCreate, async (interaction) => {
+	// Gestione autocompletamento
+	if (interaction.isAutocomplete()) {
+		const command = client.commands.get(interaction.commandName);
+		if (!command || !command.autocomplete) return;
+
+		try {
+			await command.autocomplete(interaction);
+		} catch (error) {
+			console.error('Autocomplete error:', error);
+
+			// Rispondi solo se non hai giÃ risposto
+			if (!interaction.responded) {
+				try {
+					await interaction.respond([]);
+				} catch (responseError) {
+					console.error('Error sending empty autocomplete response:', responseError);
+				}
+			}
+		}
+		return;
+	}
+});
 
 	client.on(Events.InteractionCreate, async (interaction) => {
 		if (!interaction.isCommand()) return;
@@ -92,9 +116,9 @@ async function main(): Promise<void> {
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
 
-	client?.user?.setPresence({
+	client!.user!.setPresence({
 			activities: [{
-					name: 'Using Unico',
+					name: 'Using UNICO',
 					type: ActivityType.Custom,
 					url: 'https://theunico.it/'
 			}],

@@ -32,7 +32,6 @@
         "src/commands/summarize.ts",
         "src/registers/register-command.ts",
         "src/utils/enums.ts",
-        "src/utils/fetchAgents.ts",
     ],
     "typeRoots": [
       "./node_modules/@types",
