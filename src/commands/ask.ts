@@ -23,17 +23,17 @@ preloadAgents();
 const command = {
 	name: 'ask',
 	data: new SlashCommandBuilder()
-			.setName('ask')
-			.setDescription('Replies with the response to the query!')
-			.addStringOption((option) =>
-				option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
-			)
-			.addStringOption((option) =>
-				option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true).setAutocomplete(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
-			)
-			.addStringOption((option) =>
-				option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(false)
-			),
+		.setName('ask')
+		.setDescription('Replies with the response to the query!')
+		.addStringOption((option) =>
+			option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
+		)
+		.addStringOption((option) =>
+			option.setName('agent').setDescription('Id of the agent in your UNICO account.').setRequired(true).setAutocomplete(true)//.addChoices(cachedAgents!) //! DO NOT DELETE THIS COMMENT.
+		)
+		.addStringOption((option) =>
+			option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(false)
+		),
 	async autocomplete(interaction: AutocompleteInteraction):Promise<void> {
 		const focusedValue = interaction.options.getFocused();
 
