@@ -15,7 +15,7 @@ const command = {
       .setColor(0x2031F)
       .setTitle('UNICO Discord bot - Help')
       .setURL('https://github.com/unico-it/unico-discord-bot')
-      .setAuthor({ name: 'Unico Discord Bot', url: 'https://github.com/unico-it/unico-discord-bot' })
+      .setAuthor({ name: 'UNICO', url: 'https://theunico.it' })
       .setDescription('Here a list of the commands avaiable:')
       .setThumbnail('https://raw.githubusercontent.com/unico-it/unico-discord-bot/refs/heads/main/logo.png')
       .addFields(
