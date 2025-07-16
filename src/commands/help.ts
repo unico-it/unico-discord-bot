@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 const command = {
   name:'help',
   data: new SlashCommandBuilder()
