@@ -10,8 +10,8 @@ const command = {
   data: new SlashCommandBuilder()
 		.setName('help')
     .setDescription('Print the documentation relative to the bot commands'),
-  execute(interaction:ChatInputCommandInteraction) : void {
-    const exampleEmbed = new EmbedBuilder()
+  execute(interaction:ChatInputCommandInteraction): void {
+    const helpEmbed = new EmbedBuilder()
       .setColor(0x2031F)
       .setTitle('UNICO Discord bot - Help')
       .setURL('https://github.com/unico-it/unico-discord-bot')
@@ -21,33 +21,26 @@ const command = {
       .addFields(
         {
           name: '/ask',
-          value: '**agent:** Autocomplete shows server agents, enter ID manually if using your API key (NOTE: the reply is visible only to the sender',
-          inline: true
+          value:
+            'ID of the agent to use. Autocomplete shows server agents, enter ID manually if using your API key\n\n \
+            - **agent**: ID of the agent to use\n\n \
+            - **query**: The question for the agent\n\n \
+            - **unico-api-key** (optional): Your UNICO api key',
         },
         {
           name: '/open-ticket',
-          value: '**message:** content of the ticket\n **useunicoagent:** Use a unico agent to respond to the ticket',
-          inline: true
+          value:
+            '- **message**: Content of the ticket\n\n \
+            - **useunicoagent**: Use a unico agent to respond to the ticket',
         },
-        {
-          name: '/summarize',
-          value: '**channel:** Channel to summarize with UNICO agents',
-          inline: true
-        },
-        {
-          name: '/clear',
-          value: 'clears all chat commands',
-          inline: true
-        },
-        {
-          name: '/ping',
-          value: 'a simple ping command',
-          inline: true
-        },
+        { name: '/summarize', value: '- **channel**: Channel to summarize using UNICO', inline: true },
+        { name: '/clear', value: '- **channel**: Channel to clear (N.B. only admins can use this command)', inline: true },
+        { name: '/ping', value: 'A simple ping command', inline: true },
+        { name: '/help', value: 'Show this help message', inline: true }
       )
       .setTimestamp()
       .setFooter({ text: 'UNICO Discord Bot', iconURL: 'https://raw.githubusercontent.com/unico-it/unico-discord-bot/refs/heads/main/logo.png' });
-      interaction.reply({ embeds: [exampleEmbed] });
+      interaction.reply({ embeds: [helpEmbed] });
   }
 };
 
