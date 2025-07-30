@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore:
       - main
-    
+
 jobs:
   CI:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
           echo "Running TypeScript validation"
           tsc --noEmit
 
-      - name: Run ESLint
+      - name: Lint code
         run: |
           echo "Running ESLint"
           npm run lint

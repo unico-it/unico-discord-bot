@@ -41,14 +41,14 @@ const command = {
 				throw Error('The message sent by the user was invalid!');
 			}
 
-			const completion = await client
-				.agents
-				.completions.create(Number(process.env.UNICO_TICKET_AGENT_ID!), `Reply to this ticket by ${username}: ${interaction.options.getString('message')}`);
+			const completion = await client.agents.completions.create(
+				Number(process.env.UNICO_TICKET_AGENT_ID!),
+				`Reply to this ticket by ${username}: ${interaction.options.getString('message')}`
+			);
 
 			if (useUnico) {
 				await interaction.editReply({
-					content:
-						`>>> ## Your support ticket has been opened. Here the response:\n ${completion.text}`,
+					content: `>>> ## Your support ticket has been opened. Here the response:\n ${completion.text}`,
 					allowedMentions: { parse: [] },
 				});
 			}
@@ -61,12 +61,12 @@ const command = {
 
 			await channel.send({
 				content:
-					'>>> ## New Ticket Opened\n' +
-					`**User:** ${username}\n` +
-					`**Timestamp:** ${new Date(interaction.createdTimestamp).toDateString()}\n` +
-					`**Message:** ${interaction.options.getString('message')}\n` +
-					`**User has used UNICO?** ${useUnico ? 'Yes' : 'No'}\n` +
-					`## UNICO Support Agent Response\n ${completion.text}`,
+          '>>> ## New Ticket Opened\n' +
+          `**User:** ${username}\n` +
+          `**Timestamp:** ${new Date(interaction.createdTimestamp).toDateString()}\n` +
+          `**Message:** ${interaction.options.getString('message')}\n` +
+          `**User has used UNICO?** ${useUnico ? 'Yes' : 'No'}\n` +
+          `## UNICO Support Agent Response\n ${completion.text}`,
 				allowedMentions: { parse: [] },
 			});
 		} catch (error: unknown) {
