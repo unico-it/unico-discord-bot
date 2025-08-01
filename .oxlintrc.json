@@ -20,6 +20,7 @@
     ".zed"
   ],
   "rules": {
+    "typescript/consistent-type-imports": "error",
     "no-debugger": "error",
     "no-unsafe-finally": "error",
     "no-unsafe-negation": "error",
