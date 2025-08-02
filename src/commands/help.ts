@@ -11,7 +11,7 @@ const command = {
 		.setDescription('Print the documentation relative to the bot commands'),
 	execute(interaction: ChatInputCommandInteraction): void {
 		const helpEmbed = new EmbedBuilder()
-			.setColor(0x2031f)
+			.setColor(0x02031f)
 			.setTitle('UNICO Discord bot - Help')
 			.setURL('https://github.com/unico-it/unico-discord-bot')
 			.setAuthor({ name: 'UNICO', url: 'https://theunico.it' })
