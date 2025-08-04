@@ -33,7 +33,6 @@
       "error",
       "always"
     ],
-    "prefer-const": "error",
     "typescript/explicit-function-return-type": "error",
     "no-unused-vars": [
       "warn",
