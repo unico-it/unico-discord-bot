@@ -9,14 +9,14 @@ dotenv.config();
 let serverAgents: Agent[] = [];
 
 async function preloadAgents(): Promise<void> {
-  try {
-    const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-    serverAgents = await client.agents.retrieve();
-    console.log(`Preloaded ${serverAgents.length} agents`);
-  } catch (error) {
-    console.error('Failed to preload agents:', error);
-    serverAgents = [];
-  }
+	try {
+		const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
+		serverAgents = await client.agents.retrieve();
+		console.log(`Preloaded ${serverAgents.length} agents`);
+	} catch (error) {
+		console.error('Failed to preload agents:', error);
+		serverAgents = [];
+	}
 }
 
 preloadAgents();
@@ -27,21 +27,30 @@ const command = {
 		.setName('ask')
 		.setDescription('Replies with the response to the query!')
 		.addStringOption((option) =>
-			option.setName('agent').setDescription('Agent ID in UNICO. Autocomplete shows server agents, \
-			enter ID manually if using your API key.').setRequired(true).setAutocomplete(true)
+			option
+				.setName('agent')
+				.setDescription(
+					'Agent ID in UNICO. Autocomplete shows server agents, \
+			enter ID manually if using your API key.'
+				)
+				.setRequired(true)
+				.setAutocomplete(true)
 		)
 		.addStringOption((option) =>
 			option.setName('query').setDescription('Query for the specified agent.').setRequired(true)
 		)
 		.addStringOption((option) =>
-			option.setName('unico-api-key').setDescription('Your UNICO API key. You can specify it to access to your agents.').setRequired(false)
+			option
+				.setName('unico-api-key')
+				.setDescription('Your UNICO API key. You can specify it to access to your agents.')
+				.setRequired(false)
 		),
-	async autocomplete(interaction: AutocompleteInteraction):Promise<void> {
+	async autocomplete(interaction: AutocompleteInteraction): Promise<void> {
 		const focusedValue = interaction.options.getFocused();
 
-		const filtered = serverAgents.filter((agent) =>
-			agent.name.toLowerCase().includes(focusedValue.toLowerCase()) ||
-			String(agent.id).includes(focusedValue)
+		const filtered = serverAgents.filter(
+			(agent) =>
+				agent.name.toLowerCase().includes(focusedValue.toLowerCase()) || String(agent.id).includes(focusedValue)
 		);
 
 		await interaction.respond(
@@ -71,7 +80,10 @@ const command = {
 				return;
 			}
 
-			const client: UnicoClient = new UnicoClient(unicoApiKey ?? process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
+			const client: UnicoClient = new UnicoClient(
+				unicoApiKey ?? process.env.UNICO_API_KEY!,
+				process.env.UNICO_BASE_URL
+			);
 			const completion: Completion = await client.agents.completions.create(Number(agentId), query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);

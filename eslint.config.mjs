@@ -1,23 +1,40 @@
 // @ts-check
 
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
+import stylistic from "@stylistic/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 
-export default tseslint.config({
-	extends: [eslint.configs.recommended, tseslint.configs.recommended, tseslint.configs.stylistic],
-	rules: {
-		"no-unused-vars": "off",
-		"@typescript-eslint/no-unused-vars": [
-			"warn",
-			{ argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
-		],
-		quotes: ["warn", "single"],
-		semi: ["error", "always"],
-		eqeqeq: ["error", "always"],
-		"@typescript-eslint/explicit-function-return-type": "error",
-		"@typescript-eslint/no-explicit-any": "off",
-		"@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
-		"@typescript-eslint/ban-ts-comment": "off",
-	},
-	ignores: ["**/*.config.*", "node_modules/**/*", "dist/**/*", ".git/", ".vscode/", ".github/", ".idea/", ".zed"],
-});
+export default [
+  {
+    ignores: ["**/*.config.*", "node_modules/**/*", "dist/**/*", ".git/", ".vscode/", ".github/", ".idea/", ".zed"],
+  },
+  {
+    files: ["**/*.{js,ts,jsx,tsx}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parser: tsParser,
+    },
+    plugins: {
+      "@stylistic": stylistic,
+    },
+    rules: {
+      "@stylistic/quotes": ["warn", "single"],
+      "@stylistic/semi": ["error", "always"],
+      "@stylistic/indent": ["error", "tab"],
+      "@stylistic/comma-dangle": ["error", "only-multiline"],
+      "@stylistic/array-bracket-spacing": ["error", "never"],
+      "@stylistic/object-curly-spacing": ["error", "always"],
+      "@stylistic/space-before-function-paren": [
+        "error",
+        {
+          anonymous: "never",
+          named: "never",
+          asyncArrow: "always",
+        },
+      ],
+      "@stylistic/type-annotation-spacing": "error",
+      "@stylistic/member-delimiter-style": "error",
+      "prefer-const": "error",
+    },
+  },
+];

@@ -109,12 +109,12 @@ async function main(): Promise<void> {
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
 	client!.user!.setPresence({
-			activities: [{
-					name: 'UNICO',
-					type: ActivityType.Playing,
-					url: 'https://theunico.it/'
-			}],
-			status: 'online'
+		activities: [{
+			name: 'UNICO',
+			type: ActivityType.Playing,
+			url: 'https://theunico.it/'
+		}],
+		status: 'online'
 	});
 }
 

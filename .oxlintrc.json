@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript"
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "**/*.config.*",
+    "node_modules/**/*",
+    "dist/**/*",
+    ".git/",
+    ".vscode/",
+    ".github/",
+    ".idea/",
+    ".zed"
+  ],
+  "rules": {
+    "typescript/consistent-type-imports": "error",
+    "no-debugger": "error",
+    "no-unsafe-finally": "error",
+    "no-unsafe-negation": "error",
+    "no-unsafe-optional-chaining": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+    "no-var": "error",
+    "no-empty-function": "error",
+    "eqeqeq": [
+      "error",
+      "always"
+    ],
+    "typescript/explicit-function-return-type": "error",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
+  }
+}
