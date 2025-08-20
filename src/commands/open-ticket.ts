@@ -42,7 +42,7 @@ const command = {
 			}
 
 			const completion = await client.agents.completions.create(
-				Number(process.env.UNICO_TICKET_AGENT_ID!),
+				process.env.UNICO_TICKET_AGENT_ID!,
 				`Reply to this ticket by ${username}: ${interaction.options.getString('message')}`
 			);
 

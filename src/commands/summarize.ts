@@ -29,11 +29,11 @@ const command = {
 
 			const messages = (await channel.messages.fetch({ limit: 10 })).filter((m) => !m.pinned);
 			const query =
-        `Summarize the following messages from #${channel.name}:\n\n` +
-        messages.map((message) => `${message.author.username}: ${message.content}`).join('\n');
+        	`Summarize the following messages from #${channel.name}:\n\n` +
+        	messages.map((message) => `${message.author.username}: ${message.content}`).join('\n');
 
 			const client = new UnicoClient(process.env.UNICO_API_KEY!, process.env.UNICO_BASE_URL);
-			const completion: Completion = await client.agents.completions.create(Number(process.env.UNICO_SUMMARIZER_AGENT_ID!), query);
+			const completion: Completion = await client.agents.completions.create(process.env.UNICO_SUMMARIZER_AGENT_ID!, query);
 
 			interaction.editReply(`${completion.text}`);
 		} catch (error: unknown) {

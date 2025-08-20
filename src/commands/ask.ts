@@ -75,16 +75,11 @@ const command = {
 				return;
 			}
 
-			if (isNaN(Number(agentId))) {
-				interaction.editReply('Agent ID must be a number.');
-				return;
-			}
-
 			const client: UnicoClient = new UnicoClient(
 				unicoApiKey ?? process.env.UNICO_API_KEY!,
 				process.env.UNICO_BASE_URL
 			);
-			const completion: Completion = await client.agents.completions.create(Number(agentId), query);
+			const completion: Completion = await client.agents.completions.create(agentId, query);
 
 			interaction.editReply(`**Agent ${agentId}**: ${completion.text}`);
 		} catch (error: unknown) {
