@@ -110,12 +110,20 @@ async function main(): Promise<void> {
 	});
 
 	client.on(Events.GuildMemberAdd, async (member: GuildMember) =>{
+
 		const WELCOME_MESSAGE: string[] = [`🎉 Hello ${member.user.globalName}! Welcome to the UNICO server. Discover #rules and commands now with /help.`,
 			`👋 Hey ${member.user.globalName}, the UNICO community welcomes you! Read #rules to get started or view commands with /help.`,
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
 			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
+
 		member.send(WELCOME_MESSAGE[Math.floor(Math.random() * (4 - 1 + 1)) + 1]!);
-		await member.roles.add(process.env.BASE_USER_ROLE!);
+
+		if(!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)){
+			console.error('Error finding the Specified base roleID:', process.env.BASE_USER_ROLE_ID);
+			return;
+		}
+
+		await member.roles.add(process.env.BASE_USER_ROLE_ID!);
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
