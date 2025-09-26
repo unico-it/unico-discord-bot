@@ -1,3 +1,4 @@
+import type { GuildMember } from 'discord.js';
 import { Client, Events, GatewayIntentBits, Collection, ActivityType } from 'discord.js';
 import CommandRegister from './registers/register-command';
 import { readdirSync } from 'node:fs';
@@ -12,6 +13,7 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.GuildMessagePolls,
 	],
 });
@@ -105,6 +107,15 @@ async function main(): Promise<void> {
 
 			await interaction.reply(reply);
 		}
+	});
+
+	client.on(Events.GuildMemberAdd, async (member: GuildMember) =>{
+		const WELCOME_MESSAGE: string[] = [`🎉 Hello ${member.user.globalName}! Welcome to the UNICO server. Discover #rules and commands now with /help.`,
+			`👋 Hey ${member.user.globalName}, the UNICO community welcomes you! Read #rules to get started or view commands with /help.`,
+			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
+			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
+		member.send(WELCOME_MESSAGE[Math.floor(Math.random() * (4 - 1 + 1)) + 1]!);
+		await member.roles.add(process.env.BASE_USER_ROLE!);
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
