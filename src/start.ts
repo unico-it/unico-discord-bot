@@ -116,7 +116,7 @@ async function main(): Promise<void> {
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
 			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
 
-		member.send(WELCOME_MESSAGE[Math.floor(Math.random() * (4 - 1 + 1)) + 1]!);
+		member.send(WELCOME_MESSAGE[Math.floor(Math.random() * (WELCOME_MESSAGE.length - 1 + 1)) + 1]!);
 
 		if(!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)){
 			console.error('Error finding the Specified base roleID:', process.env.BASE_USER_ROLE_ID);
