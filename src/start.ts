@@ -1,4 +1,4 @@
-import type { GuildMember } from 'discord.js';
+import type { GuildMember, TextChannel } from 'discord.js';
 import { Client, Events, GatewayIntentBits, Collection, ActivityType } from 'discord.js';
 import CommandRegister from './registers/register-command';
 import { readdirSync } from 'node:fs';
@@ -115,7 +115,14 @@ async function main(): Promise<void> {
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
 			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
 
-		member.send(WELCOME_MESSAGE[Math.floor(Math.random() * (WELCOME_MESSAGE.length - 1 + 1)) + 1]!);
+		let selected_msg = WELCOME_MESSAGE[Math.floor(Math.random() * (WELCOME_MESSAGE.length - 1 + 1)) + 1]!;
+
+		if(selected_msg === undefined){
+			console.error('Failed to get welcome message using first in list');
+			selected_msg = WELCOME_MESSAGE[0]!;
+		}
+
+		(client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`)! as TextChannel).send(selected_msg);
 
 		if(!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)){
 			console.error('Error finding the Specified base roleID:', process.env.BASE_USER_ROLE_ID);
