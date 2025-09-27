@@ -115,16 +115,21 @@ async function main(): Promise<void> {
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
 			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
 
-		let selected_msg = WELCOME_MESSAGE[Math.floor(Math.random() * (WELCOME_MESSAGE.length - 1 + 1)) + 1]!;
-
-		if(selected_msg === undefined){
-			console.error('Failed to get welcome message using first in list');
-			selected_msg = WELCOME_MESSAGE[0]!;
+		if (!process.env.WELCOME_CHANNEL_ID){
+			console.error('WELCOME_CHANNEL_ID is unset in your .env file!');
+			return;
 		}
 
-		(client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`)! as TextChannel).send(selected_msg);
+		const WelcomeChannel: TextChannel = client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`)! as TextChannel;
+		if(!WelcomeChannel){
+			console.error('Your welcome channel does not exist or WELCOME_CHANNEL_ID is unset or invalid!');
+			return;
+		}
 
-		if(!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)){
+		const extracted_message = WELCOME_MESSAGE[Math.floor(Math.random() * (WELCOME_MESSAGE.length - 1 + 1)) + 1];
+		WelcomeChannel.send(extracted_message!);
+
+		if (!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)) {
 			console.error('Error finding the Specified base roleID:', process.env.BASE_USER_ROLE_ID);
 			return;
 		}
