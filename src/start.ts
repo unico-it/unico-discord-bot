@@ -109,7 +109,7 @@ async function main(): Promise<void> {
 		}
 	});
 
-	client.on(Events.GuildMemberAdd, async (member: GuildMember) =>{
+	client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
 		const WELCOME_MESSAGE: string[] = [`🎉 Hello ${member.user.globalName}! Welcome to the UNICO server. Discover #rules and commands now with /help.`,
 			`👋 Hey ${member.user.globalName}, the UNICO community welcomes you! Read #rules to get started or view commands with /help.`,
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
