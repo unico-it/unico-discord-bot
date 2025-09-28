@@ -1,3 +1,4 @@
+import type { GuildMember, TextChannel } from 'discord.js';
 import { Client, Events, GatewayIntentBits, Collection, ActivityType } from 'discord.js';
 import CommandRegister from './registers/register-command';
 import { readdirSync } from 'node:fs';
@@ -12,6 +13,7 @@ const client = new Client({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.GuildMessagePolls,
 	],
 });
@@ -105,6 +107,29 @@ async function main(): Promise<void> {
 
 			await interaction.reply(reply);
 		}
+	});
+
+	client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
+		const welcomeMessage: string[] = [`🎉 Hello ${member.user.globalName}! Welcome to the UNICO server. Discover #rules and commands now with /help.`,
+			`👋 Hey ${member.user.globalName}, the UNICO community welcomes you! Read #rules to get started or view commands with /help.`,
+			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
+			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
+
+		const welcomeChannel = client.channels!.cache.get(`${process.env.DISCORD_WELCOME_CHANNEL_ID}`) as TextChannel;
+		if(!welcomeChannel){
+			console.error('The welcome channel does not exist. DISCORD_WELCOME_CHANNEL_ID:', process.env.DISCORD_WELCOME_CHANNEL_ID);
+			return;
+		}
+
+		const extracted_message = welcomeMessage[Math.floor(Math.random() * (welcomeMessage.length - 1 + 1)) + 1];
+		welcomeChannel.send(extracted_message!);
+
+		if (!member.guild.roles.cache.find(role => role.id === process.env.DISCORD_BASE_USER_ROLE_ID)) {
+			console.error('Error finding the Specified base roleID:', process.env.DISCORD_BASE_USER_ROLE_ID);
+			return;
+		}
+
+		await member.roles.add(process.env.DISCORD_BASE_USER_ROLE_ID!);
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
