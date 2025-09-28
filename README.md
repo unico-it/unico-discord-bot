@@ -42,8 +42,8 @@ UNICO Discord Bot is designed to integrate UNICO's agents with Discord. This bot
   - **UNICO_BASE_URL** (Only if you want to test the bot in staging mode): If not specified the bot will point to production
   - **UNICO_TICKET_AGENT_ID**: The id of the support agent created in your UNICO dashboard.
   - **UNICO_SUMMARIZER_AGENT_ID**: The id of the summarizer agent created in your UNICO dashboard.
-  - **BASE_USER_ROLE_ID**: The id of the role you want all new users to have.
-  - **WELCOME_CHANNEL_ID**: The id of the channel where you want the welcome message be sended.
+  - **DISCORD_BASE_USER_ROLE_ID**: The id of the role you want all new users to have.
+  - **DISCORD_WELCOME_CHANNEL_ID**: The id of the channel where you want the welcome message be sended.
 
 - **Execute the bot**: `nodemon` package will be used to restart the application when code changes.
   ```bash

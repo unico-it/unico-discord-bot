@@ -115,21 +115,21 @@ async function main(): Promise<void> {
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
 			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
 
-		const welcomeChannel = client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`) as TextChannel;
+		const welcomeChannel = client.channels!.cache.get(`${process.env.DISCORD_WELCOME_CHANNEL_ID}`) as TextChannel;
 		if(!welcomeChannel){
-			console.error('The welcome channel does not exist. WELCOME_CHANNEL_ID:', process.env.WELCOME_CHANNEL_ID);
+			console.error('The welcome channel does not exist. DISCORD_WELCOME_CHANNEL_ID:', process.env.DISCORD_WELCOME_CHANNEL_ID);
 			return;
 		}
 
 		const extracted_message = welcomeMessage[Math.floor(Math.random() * (welcomeMessage.length - 1 + 1)) + 1];
 		welcomeChannel.send(extracted_message!);
 
-		if (!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)) {
-			console.error('Error finding the Specified base roleID:', process.env.BASE_USER_ROLE_ID);
+		if (!member.guild.roles.cache.find(role => role.id === process.env.DISCORD_BASE_USER_ROLE_ID)) {
+			console.error('Error finding the Specified base roleID:', process.env.DISCORD_BASE_USER_ROLE_ID);
 			return;
 		}
 
-		await member.roles.add(process.env.BASE_USER_ROLE_ID!);
+		await member.roles.add(process.env.DISCORD_BASE_USER_ROLE_ID!);
 	});
 
 	await client.login(process.env.DISCORD_BOT_TOKEN);
