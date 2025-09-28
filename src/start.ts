@@ -115,18 +115,13 @@ async function main(): Promise<void> {
 			`✨ Hi ${member.user.globalName}, glad to have you here! Get started with #rules and /help`,
 			`💡 Hey there ${member.user.globalName}! Learn the commands with /help now and read #rules.`];
 
-		if (!process.env.WELCOME_CHANNEL_ID){
-			console.error('WELCOME_CHANNEL_ID is unset in your .env file!');
-			return;
-		}
-
 		const welcomeChannel = client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`) as TextChannel;
 		if(!welcomeChannel){
 			console.error('The welcome channel does not exist. WELCOME_CHANNEL_ID:', process.env.WELCOME_CHANNEL_ID);
 			return;
 		}
 
-		const extracted_message = welcomeMessage[Math.floor(Math.random() * (WELCOME_MESSAGE.length - 1 + 1)) + 1];
+		const extracted_message = welcomeMessage[Math.floor(Math.random() * (welcomeMessage.length - 1 + 1)) + 1];
 		welcomeChannel.send(extracted_message!);
 
 		if (!member.guild.roles.cache.find(role => role.id === process.env.BASE_USER_ROLE_ID)) {
