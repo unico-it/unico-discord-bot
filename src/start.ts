@@ -120,9 +120,9 @@ async function main(): Promise<void> {
 			return;
 		}
 
-		const WelcomeChannel: TextChannel = client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`)! as TextChannel;
-		if(!WelcomeChannel){
-			console.error('Your welcome channel does not exist or WELCOME_CHANNEL_ID is unset or invalid!');
+		const welcomeChannel = client.channels!.cache.get(`${process.env.WELCOME_CHANNEL_ID}`) as TextChannel;
+		if(!welcomeChannel){
+			console.error('The welcome channel does not exist. WELCOME_CHANNEL_ID:', process.env.WELCOME_CHANNEL_ID);
 			return;
 		}
 
